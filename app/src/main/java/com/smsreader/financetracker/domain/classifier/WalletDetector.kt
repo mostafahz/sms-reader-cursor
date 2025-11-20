@@ -94,6 +94,22 @@ object WalletDetector {
 
     fun extractBankName(senderId: String): String? {
         val bankPatterns = mapOf(
+            // UAE Banks
+            "Emirates NBD" to listOf("EMIRATESNBD", "ENBD", "EMIRATESN"),
+            "Emirates Islamic" to listOf("EMIRATESISLAMIC", "EIBANK"),
+            "ADCB" to listOf("ADCB", "ADCOMMERCIAL"),
+            "First Abu Dhabi Bank" to listOf("FAB", "FABBANK", "FIRSTBANK"),
+            "Mashreq" to listOf("MASHREQ", "MASHREQBANK"),
+            "Dubai Islamic Bank" to listOf("DIB", "DUBAIISLAMIC"),
+            "RAKBANK" to listOf("RAKBANK", "RAK"),
+            "Sharjah Islamic Bank" to listOf("SIB", "SHARJAHISLAMIC"),
+            "Commercial Bank of Dubai" to listOf("CBD", "CBDUBAI"),
+            "ADIB" to listOf("ADIB", "ABUDHABI"),
+            // UAE Payment Services
+            "Wio Bank" to listOf("WIO", "WIOPERSONAL", "WIOBANK"),
+            "Careem" to listOf("CAREEM"),
+            "Noon" to listOf("NOON"),
+            // Indian Banks
             "HDFC" to listOf("HDFC", "HDFCBK", "HDFCBANK"),
             "ICICI" to listOf("ICICI", "ICICIB"),
             "SBI" to listOf("SBI", "SBICARD", "SBIINB"),

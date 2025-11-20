@@ -12,7 +12,9 @@ object CategoryClassifier {
             "uber", "ola", "rapido", "petrol", "diesel", "parking", "toll", "fuel",
             "gas", "station", "metro", "transit", "cab", "taxi", "auto", "bus",
             "railway", "transport", "fastag", "hp", "bharat petroleum", "indian oil",
-            "bpcl", "iocl", "shell", "essar", "reliance petrol"
+            "bpcl", "iocl", "shell", "essar", "reliance petrol", "careem", "salik",
+            "parkin", "rta", "emirates", "etihad", "flydubai", "adnoc", "enoc",
+            "eppco", "emarat"
         ),
         "Health & Wellness" to listOf(
             "pharmacy", "medicine", "hospital", "clinic", "doctor", "medical",
