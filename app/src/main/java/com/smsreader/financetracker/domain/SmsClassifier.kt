@@ -43,10 +43,15 @@ object SmsClassifier {
     }
     
     fun isBankingSms(senderId: String, smsBody: String): Boolean {
-        // Check if sender ID looks like a bank
+        // Check if sender ID looks like a bank or payment service
         val bankKeywords = listOf(
+            // Indian banks/services
             "bank", "card", "atm", "paytm", "phonepe", "gpay", "upi",
-            "hdfc", "icici", "sbi", "axis", "kotak"
+            "hdfc", "icici", "sbi", "axis", "kotak",
+            // UAE banks/services
+            "emirates", "nbd", "wio", "salik", "parkin", "careem", 
+            "adcb", "fab", "mashreq", "dib", "rak", "adib", "cbd",
+            "noon", "talabat"
         )
         
         val lowerSender = senderId.lowercase()
@@ -55,14 +60,22 @@ object SmsClassifier {
         // Check sender ID
         val hasBankSender = bankKeywords.any { lowerSender.contains(it) }
         
-        // Check for transaction keywords
+        // Check for transaction keywords (English and Arabic patterns)
         val hasTransactionKeywords = lowerBody.contains("debited") || 
                                      lowerBody.contains("credited") ||
                                      lowerBody.contains("spent") ||
                                      lowerBody.contains("paid") ||
-                                     lowerBody.contains("withdrawn")
+                                     lowerBody.contains("withdrawn") ||
+                                     lowerBody.contains("payment") ||
+                                     lowerBody.contains("transaction") ||
+                                     lowerBody.contains("balance") ||
+                                     lowerBody.contains("charged") ||
+                                     lowerBody.contains("purchase") ||
+                                     lowerBody.contains("محاولة") || // Arabic: attempt
+                                     lowerBody.contains("حجزت") ||   // Arabic: reserved
+                                     lowerBody.contains("رصيد")      // Arabic: balance
         
-        // Check for amount pattern
+        // Check for amount pattern (AED or Rs)
         val hasAmount = AmountParser.extractAmount(smsBody) != null
         
         return (hasBankSender || hasTransactionKeywords) && hasAmount

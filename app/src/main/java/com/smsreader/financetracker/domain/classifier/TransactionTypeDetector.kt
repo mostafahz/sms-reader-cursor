@@ -5,12 +5,13 @@ import com.smsreader.financetracker.data.local.entities.TransactionType
 object TransactionTypeDetector {
     private val debitKeywords = listOf(
         "debited", "spent", "paid", "withdrawn", "purchase", "deducted", 
-        "charged", "debited from", "paid to", "debit", "payment"
+        "charged", "debited from", "paid to", "debit", "payment",
+        "transaction of", "payment of", "was done", "محاولة", "حجزت"
     )
 
     private val creditKeywords = listOf(
         "credited", "received", "deposited", "refund", "cashback", 
-        "earned", "credited to", "credit", "received from"
+        "earned", "credited to", "credit", "received from", "added to"
     )
 
     fun detectType(smsBody: String): TransactionType {
