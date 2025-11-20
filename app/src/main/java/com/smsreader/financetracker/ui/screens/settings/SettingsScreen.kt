@@ -3,6 +3,7 @@ package com.smsreader.financetracker.ui.screens.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smsreader.financetracker.ui.ViewModelFactory
 
@@ -40,16 +42,26 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") }
+                title = { 
+                    Text(
+                        "Settings",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    ) 
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // SMS Scanner Section
             item {
@@ -127,6 +139,7 @@ fun SettingsScreen(
                                 viewModel.scanMessages(context, selectedSenderId, messageCount)
                             },
                             modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
                             enabled = !isScanning
                         ) {
                             if (isScanning) {
@@ -179,13 +192,20 @@ fun SettingsScreen(
             }
 
             item {
-                Card {
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        modifier = Modifier.padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Export CSV
                         Button(
+                            shape = RoundedCornerShape(12.dp),
                             onClick = {
                                 viewModel.exportToCsv(context)
                             },
@@ -226,6 +246,7 @@ fun SettingsScreen(
                         OutlinedButton(
                             onClick = { showClearDialog = true },
                             modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error
                             )
@@ -248,10 +269,16 @@ fun SettingsScreen(
             }
 
             item {
-                Card {
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier.padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         InfoRow("Version", "1.0.0")
                         InfoRow("Developer", "SMS Finance Tracker")
@@ -265,20 +292,33 @@ fun SettingsScreen(
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("Clear All Data?") },
+            shape = RoundedCornerShape(20.dp),
+            title = { 
+                Text(
+                    "Clear All Data?",
+                    fontWeight = FontWeight.Bold
+                ) 
+            },
             text = { Text("Are you sure you want to delete all transactions and wallets? This cannot be undone.") },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         viewModel.clearAllData()
                         showClearDialog = false
-                    }
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
                 ) {
-                    Text("Clear", color = MaterialTheme.colorScheme.error)
+                    Text("Clear", fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showClearDialog = false }) {
+                TextButton(
+                    onClick = { showClearDialog = false },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
                     Text("Cancel")
                 }
             }
