@@ -43,6 +43,16 @@ object SmsScanner {
                         continue
                     }
                     
+                    // Check if transaction already exists (prevent duplicates)
+                    val exists = database.transactionDao().transactionExists(
+                        message.sender, 
+                        message.body, 
+                        message.timestamp
+                    )
+                    if (exists) {
+                        continue
+                    }
+                    
                     // Create transaction
                     val transaction = Transaction(
                         amount = result.amount,

@@ -22,21 +22,42 @@ class SmsReceiver : BroadcastReceiver() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("SmsReceiver", "onReceive called with action: ${intent.action}")
+        
         if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
-            val bundle = intent.extras ?: return
-            val pdus = bundle.get("pdus") as? Array<*> ?: return
+            val bundle = intent.extras ?: run {
+                Log.e("SmsReceiver", "No extras in intent")
+                return
+            }
+            val pdus = bundle.get("pdus") as? Array<*> ?: run {
+                Log.e("SmsReceiver", "No pdus in bundle")
+                return
+            }
+            
+            Log.d("SmsReceiver", "Processing ${pdus.size} SMS PDU(s)")
             
             for (pdu in pdus) {
-                val sms = SmsMessage.createFromPdu(pdu as ByteArray)
-                val senderId = sms.originatingAddress ?: continue
-                val smsBody = sms.messageBody ?: continue
-                val timestamp = sms.timestampMillis
-                
-                Log.d("SmsReceiver", "Received SMS from $senderId")
-                
-                // Process SMS in background
-                scope.launch {
-                    processSms(context, senderId, smsBody, timestamp)
+                try {
+                    val format = bundle.getString("format")
+                    val sms = if (format != null) {
+                        SmsMessage.createFromPdu(pdu as ByteArray, format)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        SmsMessage.createFromPdu(pdu as ByteArray)
+                    }
+                    
+                    val senderId = sms.originatingAddress ?: continue
+                    val smsBody = sms.messageBody ?: continue
+                    val timestamp = sms.timestampMillis
+                    
+                    Log.d("SmsReceiver", "Received SMS from $senderId: ${smsBody.take(50)}...")
+                    
+                    // Process SMS in background
+                    scope.launch {
+                        processSms(context, senderId, smsBody, timestamp)
+                    }
+                } catch (e: Exception) {
+                    Log.e("SmsReceiver", "Error parsing SMS PDU", e)
                 }
             }
         }
@@ -63,6 +84,13 @@ class SmsReceiver : BroadcastReceiver() {
             }
             
             val database = AppDatabase.getInstance(context)
+            
+            // Check if transaction already exists (prevent duplicates)
+            val exists = database.transactionDao().transactionExists(senderId, smsBody, timestamp)
+            if (exists) {
+                Log.d("SmsReceiver", "Transaction already exists, skipping duplicate")
+                return
+            }
             
             // Create transaction
             val transaction = Transaction(

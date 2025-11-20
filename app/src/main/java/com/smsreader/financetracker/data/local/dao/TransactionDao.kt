@@ -51,6 +51,12 @@ interface TransactionDao {
         ORDER BY total DESC
     """)
     fun getSpendingByWallet(startTime: Long): Flow<List<WalletSpending>>
+    
+    @Query("SELECT * FROM transactions WHERE sender_id = :senderId AND sms_body = :smsBody AND timestamp = :timestamp LIMIT 1")
+    suspend fun findDuplicateTransaction(senderId: String, smsBody: String, timestamp: Long): Transaction?
+    
+    @Query("SELECT EXISTS(SELECT 1 FROM transactions WHERE sender_id = :senderId AND sms_body = :smsBody AND timestamp = :timestamp)")
+    suspend fun transactionExists(senderId: String, smsBody: String, timestamp: Long): Boolean
 }
 
 data class CategorySpending(
